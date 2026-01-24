@@ -1,0 +1,284 @@
+\documentclass[12pt]{article}
+\usepackage{lastpage} % 获取总页数
+% 设置页面
+\usepackage{geometry}
+\geometry{left=1in,right=0.75in,top=1in,bottom=1in}
+% 插图片
+\usepackage{graphicx}
+\usepackage{subcaption}
+% 添加标题
+\usepackage{caption}
+% 设置字体
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Courier New}
+\usepackage{longtable}
+% 题型，队伍号
+\newcommand{\Problem}{C}
+\newcommand{\Team}{1111111}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,  % 文字颜色（而非框线）
+    linkcolor=blue,   % 内部引用（公式/表格/图片）颜色
+    urlcolor=blue     % 网址链接颜色
+}
+
+\usepackage{amsmath,amssymb,amsthm,array,booktabs}
+% 设置页眉页脚
+\usepackage{fancyhdr}
+\lhead{Team \Team}  % 页眉左侧：显示\Team
+\rhead{}            % 页眉右侧：清空
+\cfoot{}            % 页脚中间：清空
+% 定义“定理”环境，标题显示“Theorem”
+\newtheorem{theorem}{Theorem}
+% 定义“推论”环境，编号和theorem共享
+\newtheorem{corollary}[theorem]{Corollary}
+% 定义“引理”环境，编号也和theorem共享
+\newtheorem{lemma}[theorem]{Lemma}
+% 定义“定义”环境，独立编号
+\newtheorem{definition}{Definition}
+% 颜色
+\usepackage{xcolor}
+% 代码高亮方案宏包
+\usepackage{listings}
+\definecolor{CPPLight}  {HTML} {686868}
+\definecolor{CPPSteel}  {HTML} {888888}
+\definecolor{CPPDark}   {HTML} {262626}
+\definecolor{CPPBlue}   {HTML} {4172A3}
+\definecolor{CPPGreen}  {HTML} {487818}
+\definecolor{CPPBrown}  {HTML} {A07040}
+\definecolor{CPPRed}    {HTML} {AD4D3A}
+\definecolor{CPPViolet} {HTML} {7040A0}
+\definecolor{CPPGray}  {HTML} {B8B8B8}
+\lstset
+{
+	basicstyle=\ttfamily,        % 等宽代码字体
+	breaklines=true,             % 代码超长自动换行
+	framextopmargin=50pt,        % 代码块顶部留白
+	frame=none,                  % 无边框
+	columns=fixed,               % 等宽字符，排版整齐
+    numbers=left,                % 在左侧显示行号
+	backgroundcolor=\color[RGB]{255,255,255}, % 纯白背景
+	showstringspaces=false,      % 不显示字符串中的空格圆点
+	keywordstyle=\color{CPPBlue},          % 关键字：深蓝色
+	commentstyle=\itshape\color{CPPGreen}, % 注释：斜体+深青色
+	stringstyle=\slshape\color{CPPRed},    % 字符串：倾斜+深红色
+	emphstyle=\color{CPPViolet},           % 强调词：紫色
+	numberstyle=\footnotesize\color{darkgray}, % 行号格式
+}
+\lstdefinelanguage{Python}
+{
+    morekeywords={alignas,continute,friend,register,true,alignof,decltype,goto,
+		reinterpret_cast,try,asm,defult,if,return,typedef,auto,delete,inline,short,
+		typeid,bool,do,int,signed,typename,break,double,long,sizeof,union,case,
+		dynamic_cast,mutable,static,unsigned,catch,else,namespace,static_assert,using,
+		char,enum,new,static_cast,virtual,char16_t,char32_t,explict,noexcept,struct,
+		void,export,nullptr,switch,volatile,class,extern,operator,template,wchar_t,
+		const,false,private,this,while,constexpr,float,protected,thread_local,
+		const_cast,for,public,throw,std},
+	emph={map,set,multimap,multiset,unordered_map,unordered_set,numpy,graph,path,append,extend,
+		unordered_multiset,unordered_multimap,vector,string,list,deque,
+		array,stack,forwared_list,iostream,memory,shared_ptr,unique_ptr,
+		random,bitset,ostream,istream,cout,cin,endl,move,default_random_engine,
+		uniform_int_distribution,iterator,algorithm,functional,bing,numeric,},
+	emphstyle=\color{CPPViolet},
+}
+\lstdefinelanguage{Matlab}
+{
+    morekeywords={if,elseif,else,end,for,while,switch,case,otherwise,function,return,
+        classdef,properties,methods,global,persistent,try,catch,warning,error,true,false},
+    emph={zeros,ones,rand,randn,linspace,meshgrid,size,length,reshape,plot,plot3,
+        figure,xlabel,ylabel,zlabel,title,legend,grid,ode45,dsolve,subs,vpa,inv,eig,det,
+        cell,struct,char,double,disp,fprintf,input,optimset,fmincon},
+    emphstyle=\color{CPPViolet},
+}
+
+\begin{document}
+\graphicspath{{.}}  % Place your graphic files in the same directory as your main document
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif, .png}
+\thispagestyle{empty}
+\vspace*{-16ex}
+\centerline
+{
+\begin{tabular}{*3{c}}
+	\parbox[t]{0.3\linewidth}{\begin{center}\textbf{Problem Chosen}\\ \Large \textcolor{red}{\Problem}\end{center}}
+	& \parbox[t]{0.3\linewidth}{\begin{center}\textbf{2026\\ MCM/ICM\\ Summary Sheet}\end{center}}
+	& \parbox[t]{0.3\linewidth}{\begin{center}\textbf{Team Control Number}\\ \Large \textcolor{red}{\Team}\end{center}}	\\
+	\hline
+\end{tabular}
+}
+\begin{center}
+\textcolor{red}
+{
+Use this template to begin typing the first page (summary page) of your electronic report. This \newline
+template uses a 12-point Times New Roman font. Submit your paper as an Adobe PDF \newline
+electronic file (e.g. 1111111.pdf), typed in English, with a readable font of at least 12-point type.	\\[2ex]
+Do not include the name of your school, advisor, or team members on this or any page.	\\[2ex]
+Be sure to change the control number and problem choice above.	\\
+You may delete these instructions as you begin to type your report here. 	\\[2ex]
+\textbf{Follow us @COMAPMath on X or COMAPCHINAOFFICIAL on Weibo for the \newline
+most up to date contest information.}
+}
+\end{center}
+\clearpage %强制分页
+\pagestyle{fancy} %启用自定义美化页眉页脚样式，关闭 LaTeX 默认的原始样式
+\tableofcontents %生成目录
+\newpage
+\setcounter{page}{1} %正文页码从1开始
+\rhead{Page \thepage\ of \pageref{LastPage}}  %页眉右侧显示当前页码/总页数
+% 正文开始处
+
+\begin{lstlisting}[language=Python, numbers=left, caption={Pythoncode}, label={code:python}]
+import requests
+import pandas as pd
+
+# 真实API地址：世界银行教育数据（学生学习时长相关）
+api_url = "http://api.worldbank.org/v2/country/all/indicator/SE.XPD.TOTL.GD.ZS?format=json&per_page=1000"
+
+# 调用API（世界银行API需要加个参数指定语言）
+response = requests.get(api_url, params={"lang": "en"})
+data = response.json()[1]  # 提取数据部分
+
+# 整理成表格，保存为CSV（美赛直接用）
+df = pd.DataFrame(data)
+df = df[["countryiso3code", "date", "value"]]  # 只保留核心列
+df.columns = ["国家代码", "年份", "教育投入占GDP比例"]  # 重命名列（方便你看）
+df.to_csv("C:/Users/17934/Desktop/美赛_世界银行教育数据.csv", index=False, encoding="utf-8")
+
+print("数据获取成功！已保存为CSV文件")
+
+\end{lstlisting}
+
+\begin{lstlisting}[language=Matlab, numbers=left, caption={Matlabcode}, label={code:python}]
+table = readtable('C:\Users\17934\Desktop\campu_data.csv');
+x0=linspace(1,200,200);
+y0=table.Study_Hours;
+F1=griddedInterpolant(x0,y0,'linear'); %线性插值
+F2=griddedInterpolant(x0,y0,'spline'); %三次样条插值
+%F2=griddedInterpolant(x0,y0,'spline','extrap'); 对超出数据范围的插值运算使用外推方法
+F3=griddedInterpolant(x0,y0,'cubic'); %三次多项式插值
+x=1:0.1:200;
+y1=F1(x);
+y2=F2(x);
+subplot(1,2,1);
+plot(x,y1);
+title('线性插值');
+subplot(1,2,2);
+plot(x,y2);
+title('三次样条插值');
+
+%三次样条插值的另一种计算方式-csape函数
+%pp=csape(x0,y0);
+%pp1=finder(pp); %计算pp函数的导数
+%pp1=fnint(pp); %计算pp函数的积分
+%y3=fnval(pp,x) %计算pp函数的函数值
+\end{lstlisting}
+
+\lstinputlisting[language=Python, numbers=left, caption={Python crawler code}, label={code:python_crawler}]{爬虫.py}
+
+ready for MCM!
+try\\
+trytry\\
+trytrytry\\
+
+\section{Notations}
+
+Here are all the notations and their meanings in this paper.
+\begin{longtable}{>{\centering\arraybackslash}p{5em}>{\centering\arraybackslash}p{30em}}
+\caption{Notations and Meanings}\label{tab:notation}\\
+\toprule
+Symbol & Meaning \\ \midrule
+\endfirsthead
+
+% 续表标题（可选，让第二页也有表头）
+\caption{Notations and Meanings (Continued)}\\
+\toprule
+Symbol & Meaning \\ \midrule
+\endhead
+
+\bottomrule
+\endfoot
+
+$t$ & Time \\
+$N$ & Total reported opioid cases\\
+$N_t$ & Total reported drug cases\\
+$\lambda$ & Average cases induced by a single case\\
+$A_t$ & Status at $t$ \\ 
+$E$ & Set containing socio-economic factors with high correlation $t$ \\
+$T$ & Transition matrix\\ 
+$i(t)$ & Proportion of opioid cases in all drug cases at $t$ \\
+$\mu_1$ & Average number of drug cases induced by an existing drug case \\
+$\mu_2$ & Number of opioid cases induced among all drug cases \\
+$\gamma$ & Drug spread slow down factor \\
+$i_0$ & Status at $t$ \\ 
+$H$ & Information Entropy \\ 
+$p_0$ & Initial number of drug cases\\
+\end{longtable}
+
+\begin{equation}
+	N_t \frac{\mathrm{d}i}{\mathrm{d}t}=
+	N_t \mu_2 i(t)(1-i(t)),i(0)=i_0 
+	\label{SI}
+\end{equation}
+the equation~\ref{SI} above shows the dynamic equation of opioid spread.
+
+\begin{center}
+	\includegraphics[width=13cm,height=5.5cm]{piano.jpg}
+    \captionof{figure}{Drug cases and proportion of opioid cases over time}\label{spread_rate}
+\end{center}
+the figure~\ref{spread_rate} above shows the drug cases and proportion of opioid cases over time.
+
+try to put two figures side by side
+\begin{figure}[!htbp]
+    \centering
+    % 第一个图片：占一行宽度的45%
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{piano.jpg} % 图片1路径
+    \end{minipage}
+    \hspace{0.05\textwidth} % 两张图之间的间距
+    % 第二个图片：占一行宽度的45%
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{piano.jpg} % 图片2路径
+    \end{minipage}
+    % 共享标题
+    \caption{Two pictures in one line (comparison)}
+    \label{fig:two_pics}
+\end{figure}
+
+use different captions for each figure
+\begin{figure}[!htbp]
+    \centering
+    % 第一张图+独立标题
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{piano.jpg}
+        \caption{Picture 1}
+        \label{fig:pic1}
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    % 第二张图+独立标题
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{piano.jpg}
+        \caption{Picture 2}
+        \label{fig:pic2}
+    \end{minipage}
+\end{figure}
+
+fix location
+\begin{center}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{piano.jpg}
+    \end{minipage}
+    \hspace{0.05\textwidth}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{piano.jpg}
+    \end{minipage}
+    \captionof{figure}{Two pictures in one line}\label{fig:two_pics}
+\end{center}
+
+\end{document}
