@@ -1,0 +1,454 @@
+\documentclass[12pt]{article}
+\usepackage{totcount}
+\regtotcounter{page}
+% 设置页面
+\usepackage{geometry}
+\geometry{left=1in,right=0.75in,top=1in,bottom=1in}
+% 插图片
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{subcaption}
+% 添加标题
+\usepackage{caption}
+% 设置字体
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+\setmonofont{Courier New}
+\newfontfamily{\handwriting}{Comic Sans MS}
+\usepackage{longtable}
+% 题型，队伍号
+\newcommand{\Problem}{B}
+\newcommand{\Team}{2625065}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,  % 文字颜色（而非框线）
+    urlcolor=blue,    % 网址链接颜色
+    linkcolor=black,  % 内部章节链接
+    citecolor=black   % 引用链接颜色
+}
+
+\usepackage{indentfirst}
+\usepackage{setspace} % 控制行间距
+\onehalfspacing % 1.5 倍行距
+\setlength{\parindent}{2em} % 首行缩进两个字符
+
+\usepackage{enumitem}
+\setlist[enumerate]{
+    label=\textbf{\arabic*.},  % 序号加粗
+    leftmargin=*,              % 自动适配段落缩进
+    itemsep=0pt,               % 列表条目间距
+    topsep=6pt                 % 列表和前后文字的间距
+}
+
+% 数学公式
+\usepackage{amsmath,amssymb,amsthm,array,booktabs}
+\usepackage{algorithm,algorithmic}
+% 设置页眉页脚
+\usepackage{fancyhdr}
+\lhead{Team \Team}  % 页眉左侧：显示\Team
+\rhead{}            % 页眉右侧：清空
+\cfoot{}            % 页脚中间：清空
+% 定义“定理”环境，标题显示“Theorem”
+\newtheorem{theorem}{Theorem}
+% 定义“推论”环境，编号和theorem共享
+\newtheorem{corollary}[theorem]{Corollary}
+% 定义“引理”环境，编号也和theorem共享
+\newtheorem{lemma}[theorem]{Lemma}
+% 定义“定义”环境，独立编号
+\newtheorem{definition}{Definition}
+% 颜色
+\usepackage{xcolor}
+% 代码高亮方案宏包
+\usepackage{listings}
+\definecolor{CPPLight}  {HTML} {686868}
+\definecolor{CPPSteel}  {HTML} {888888}
+\definecolor{CPPDark}   {HTML} {262626}
+\definecolor{CPPBlue}   {HTML} {4172A3}
+\definecolor{CPPGreen}  {HTML} {487818}
+\definecolor{CPPBrown}  {HTML} {A07040}
+\definecolor{CPPRed}    {HTML} {AD4D3A}
+\definecolor{CPPViolet} {HTML} {7040A0}
+\definecolor{CPPGray}  {HTML} {B8B8B8}
+\lstset
+{
+	basicstyle=\ttfamily,        % 等宽代码字体
+	breaklines=true,             % 代码超长自动换行
+	framextopmargin=50pt,        % 代码块顶部留白
+	frame=none,                  % 无边框
+	columns=fixed,               % 等宽字符，排版整齐
+    numbers=left,                % 在左侧显示行号
+	backgroundcolor=\color[RGB]{255,255,255}, % 纯白背景
+	showstringspaces=false,      % 不显示字符串中的空格圆点
+	keywordstyle=\color{CPPBlue},          % 关键字：深蓝色
+	commentstyle=\itshape\color{CPPGreen}, % 注释：斜体+深青色
+	stringstyle=\slshape\color{CPPRed},    % 字符串：倾斜+深红色
+	emphstyle=\color{CPPViolet},           % 强调词：紫色
+	numberstyle=\footnotesize\color{darkgray}, % 行号格式
+}
+\lstdefinelanguage{Python}
+{
+    morekeywords={alignas,continute,friend,register,true,alignof,decltype,goto,
+		reinterpret_cast,try,asm,defult,if,return,typedef,auto,delete,inline,short,
+		typeid,bool,do,int,signed,typename,break,double,long,sizeof,union,case,
+		dynamic_cast,mutable,static,unsigned,catch,else,namespace,static_assert,using,
+		char,enum,new,static_cast,virtual,char16_t,char32_t,explict,noexcept,struct,
+		void,export,nullptr,switch,volatile,class,extern,operator,template,wchar_t,
+		const,false,private,this,while,constexpr,float,protected,thread_local,
+		const_cast,for,public,throw,std},
+	emph={map,set,multimap,multiset,unordered_map,unordered_set,numpy,graph,path,append,extend,
+		unordered_multiset,unordered_multimap,vector,string,list,deque,
+		array,stack,forwared_list,iostream,memory,shared_ptr,unique_ptr,
+		random,bitset,ostream,istream,cout,cin,endl,move,default_random_engine,
+		uniform_int_distribution,iterator,algorithm,functional,bing,numeric,},
+	emphstyle=\color{CPPViolet},
+}
+\lstdefinelanguage{Matlab}
+{
+    morekeywords={if,elseif,else,end,for,while,switch,case,otherwise,function,return,
+        classdef,properties,methods,global,persistent,try,catch,warning,error,true,false},
+    emph={zeros,ones,rand,randn,linspace,meshgrid,size,length,reshape,plot,plot3,
+        figure,xlabel,ylabel,zlabel,title,legend,grid,ode45,dsolve,subs,vpa,inv,eig,det,
+        cell,struct,char,double,disp,fprintf,input,optimset,fmincon},
+    emphstyle=\color{CPPViolet},
+}
+
+\begin{document}
+\graphicspath{{.}}  % Place your graphic files in the same directory as your main document
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif, .png}
+\thispagestyle{empty}
+\vspace*{-16ex}
+\centerline
+{
+\begin{tabular}{*3{c}}
+	\parbox[t]{0.3\linewidth}{\begin{center}\textbf{Problem Chosen}\\ \Large {\Problem}\end{center}}
+	& \parbox[t]{0.3\linewidth}{\begin{center}\textbf{2026\\ MCM/ICM\\ Summary Sheet}\end{center}}
+	& \parbox[t]{0.3\linewidth}{\begin{center}\textbf{Team Control Number}\\ \Large {\Team}\end{center}}	\\
+	\hline
+\end{tabular}
+}
+
+\newpage
+\thispagestyle{empty}
+\newgeometry{left=2.5cm, right=2.5cm, top=3cm, bottom=3cm}
+\begin{center}
+{\huge \textbf{Memo}}
+\end{center}
+{\handwriting
+\noindent {\large Dear Members of the Juneau Tourist Council,}
+\vspace{1em}
+
+This is the handwritten text of my letter. 
+
+The font will only affect this part of the document. 
+
+You can write multiple paragraphs here.
+
+\vspace{4em}
+\begin{flushright}
+    Sincerely, \\[1em]
+    MCM Team \#110 \\[0.5em]
+    January 29, 2026
+\end{flushright}
+}
+\restoregeometry
+
+\newpage
+\pagestyle{fancy} %启用自定义美化页眉页脚样式，关闭 LaTeX 默认的原始样式
+\tableofcontents %生成目录
+\newpage
+\setcounter{page}{4} %正文页码从3开始
+\rhead{Page \thepage\ of \total{page}} %页眉右侧显示当前页码/总页数
+
+% 正文开始处
+\section{Introduction}
+\subsection{Problem Background}
+Juneau, Alaska,a tourism city with a population of around 30,000,hosted a record of 1.6 million cruise passengers in 2023, with up to 20,000 visitors on peak days, generating roughly \$375 million in revenue. 
+However,this influx has led to severe overcrowding,straining local infrastructure, housing, waste management, and increasing the carbon footprint.
+A key attraction, the Mendenhall Glacier, has been receding—losing the equivalent of eight football fields since 2007—partly due to warming exacerbated by tourism-related emissions.
+This creates a critical conflict: the tourism economy depends on natural assets that are being degraded by the very activity they support.
+
+Additionally, hidden costs of tourism—including pressure on drinking water, waste systems, and resident quality of life—have divided the community.
+Many who rely on tourism oppose visitor limits or fees, fearing economic loss, while other residents are protesting or leaving due to overcrowding and disruption. 
+The city must therefore balance economic benefits against environmental preservation and social well-being to achieve sustainable tourism.
+
+\subsection{Clarification and Restatements}
+After preliminary analysis of the issues, we have identified several core conflicts to solved:
+\subsection{Model Assumptions}
+The basic assumptions of the opioid spread model are as follows:
+\begin{itemize}
+    \item Economic gains versus ecological damage.
+    \item Community costs incurred by tourists and the resulting strain on community carrying capacity.
+    \item Short-term revenue versus sustainable development.
+    \item Tourism management measures may lead to a decline in visitor appeal.
+\end{itemize}
+
+We will solve the following problems based on the historial observations:
+\begin{enumerate}
+    \item Based on Juneau's tourism industry,build a model for a sustainable tourism,
+    including factors such as the number of visitors, overall revenue, and measures enacted tostabilize tourism.
+    \item Conduct model-specific sensitivity analysis,and discuss which factors are most important.
+    \item Adapted the model to other tourist cities impacted by overtourism or locations that have fewer tourists.
+    \item Write a one-page memo to the tourist council of Juneau about my predictions and advice.
+\end{enumerate}
+\subsection{Our Work}
+In problem 1, we constructed and simulated time-step difference equations for three indicators: environmental quality, infrastructure quality, and carbon footprint, along with resident satisfaction.
+Using visitor numbers as an intermediate variable, we established differential equations to derive their quantitative relationships.
+Subsequently, the ADS method was employed to assign appropriate weights to the four indicators, enabling the calculation of the city's overall sustainable development level.
+Under specified constraints, we obtained the optimal solution that maximizes sustainable development while ensuring economic benefits.
+
+As for problem 2, we performed sensitivity analysis on key parameters in the model, such as tax rates and government investment proportions.
+By varying these parameters within reasonable ranges, we observed their impact on the sustainable tourism index (STI) to identify the most influential factors.
+
+With regard to problem 3, we adapted the model to cities facing overtourism by adjusting parameters related to carrying capacity and resident satisfaction.
+For locations with fewer tourists, we modified the visitor growth dynamics to reflect different promotional strategies and word-of-mouth effects.
+
+Finally, we summarized our findings and recommendations in a one-page memo to the Juneau tourist council, highlighting strategies for balancing tourism growth with sustainability goals.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ourwork.png}
+    \caption{Our Workflow}
+    \label{fig:workflow}
+\end{figure}
+\section{Reasonable Assumptions}
+\textit{\textbf{In order to simplify the model, we make the following assumptions:}}
+\begin{itemize}
+    \item The data of Juneau provided online and show in the problem statement has high accuracy and reliability.
+    \item The local population of Juneau remains unchanged at 30,000.
+    \item Before measures were taken to intervene, the average tourist expenditure remained unchanged at \$234.
+    \item Tourism tax revenue is directly proportional to total local tourism income, disregarding the complex policy relationships involved.
+\end{itemize}
+\section{Problem 1: Model for Sustainable Tourism}
+The parameters used in our analysis in this section are as follows:
+\begin{table}[h]
+    \centering
+    \normalsize
+    \caption{Key parameters for problem 1}
+    \label{tab:parameters}
+    \resizebox{\textwidth}{!}
+    {
+    \begin{tabular}{l l || l l}
+        \toprule
+        Symbol & Interpretation & Symbol & Interpretation \\
+        \midrule
+        $E$ & environmental quality & $R$ & total tourism revenue \\
+        $L$ & infrastructure load & $V$ & number of visitors \\
+        $S$ & community welfare & $STI$ & sustainable tourism index \\
+        $C$ & tourism carbon footprint & $\tau$ & per capita tourism expenditure \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{table}
+\subsection{Method Overview}
+\subsection{Model Construction}
+When building the model, we select several parameters with practical significance such as
+infrastructure load and environmental quality, which are introduced below.
+
+\textit{\textbf{Tourism Revenue ($R$):}}
+
+Tourism revenue is a crucial indicator of the economic benefits brought by tourism activities.
+We let a portion of the total revenue convert into tax revenue,which means:
+\begin{equation}
+R_{tax} = k R
+\end{equation}
+where $k$ is the tax rate.
+Then,we divide tax revenues into three parts, allocated respectively for environmental protection, infrastructure maintenance, and community life improvement.
+Their respective weights are set to $\alpha_E$, $\alpha_L$, and $\alpha_S$.Thus:
+\begin{equation}
+    \setlength{\arraycolsep}{0pt}
+    \kern-\nulldelimiterspace
+    \left\{
+    \begin{array}{@{}l}
+        I_E = \alpha_E R_{tax}\\
+        I_L = \alpha_L R_{tax}\\
+        I_S = \alpha_S R_{tax}\\
+        \alpha_E + \alpha_L + \alpha_S = 1
+    \end{array}
+    \right.
+\end{equation}
+
+\textit{\textbf{Infrastructure Load ($L$):}}
+
+Considering the load tourists place on infrastructure, such as traffic congestion and water supply,
+along with government maintenance, we designed a formula as follow:
+\begin{equation}
+    \frac{dL}{dt} = \lambda_L \cdot V(t) - \eta_L \cdot I_L
+\end{equation}
+where $\lambda_L$, and $\eta_L$ represent the effect of visitors, and government maintenance on infrastructure, respectively.
+
+\textit{\textbf{Community Welfare ($S$):}}
+
+Community welfare is affected by both the economic benefits brought by tourism, environmental quality and the pressure on community resources,
+as well as government measures to improve residents' quality of life.
+We model it as:
+\begin{equation}
+    \frac{dS}{dt} = -\omega \cdot \left[ V(t) - V_{\text{comf}} \right] + \eta_S \cdot I_S(t) + \theta \cdot \frac{R(t)-R_{tax}(t)}{N} + \mu \cdot E(t)
+\end{equation}
+where $V_{\text{comf}}$ is the comfortable number of visitors for the community,$N$ is the local resident population,
+and $\omega$, $\eta_S$, $\theta$, and $\mu$ means respectively the effects of visitor pressure, government measures, economic benefits, and environmental quality on community welfare.
+
+\textit{\textbf{Carbon Footprint ($C$):}}
+
+The carbon footprint is highly correlated with the number of tourists and their per capita expenditure,
+whitch means $C$ is directly proportional to $V$.
+Therefore we model it as:
+\begin{equation}
+    C(t) = \phi \cdot V(t)
+\end{equation}
+
+\textit{\textbf{Environmental Quality ($E$):}}
+First of all,we choose as a mathematical model of nature's rate of growth:
+\begin{equation}
+    \frac{\Delta E}{\Delta t} = aE(E^* - E)
+\end{equation}
+which is a good approximation for natural growth processes.
+Here, $E^*$ is a constant, representing the carrying capacity of the environment.
+Since the presence of tourists affects environmental setting elements such as carbon footprint and waste generation,
+and the government will take measures to protect the environment as well,
+we introduce a term proportional to the number of visitors,carbon footprint,and government intervention;thus:
+\begin{equation}
+    \frac{dE}{dt} = a \cdot E(E^*-E)-\lambda_E \cdot V(t)+\eta_E \cdot I_E
+\end{equation}
+where $\lambda_E$ and $\eta_E$ are constants representing the impact of visitors, and government intervention on environmental quality, respectively.
+And $a$ represents the natural recovery rate of the environment.
+It should be noted that carbon footprint have an extremely significant impact on environmental quality, yet $C(t)$ is not included in the formula.
+That's because $C$ is directly proportional to $V$, so $\lambda_E$ already incorporates the environmental impact of carbon footprint.
+
+\textit{\textbf{Tourists Number ($V$):}}
+
+Assuming that, as the area becomes known to visitors, word-of-mouthrecommendation is the only form of promotion
+and each tourist has the potential to influence a constant number ($c$) of friends to visit this destination,
+we have:
+\begin{equation}
+    \frac{dV}{dt} = c \cdot V(t)
+\end{equation}
+
+However,in reality,when competition for scarce resources or environmental degradation occurs, tourists' satisfaction diminishes.
+Negative word-of-mouth advertising takes then place, making tourism flow decrease.
+To account for this,we introduce a negative feedback term related to factors like environmental quality and infrastructure status:
+\begin{equation}
+    \left\{
+    \begin{aligned}
+        &\frac{dV}{dt} = c \cdot V(t) \cdot \left[ \frac{D(t)}{V(t)} - 1 \right] \\[10pt]
+        &D(t) = V_0 \cdot \left( \frac{E(t)}{E_0} \right)^{\varepsilon_E} \cdot \left( \frac{1 - L(t)}{1 - L_0} \right)^{\varepsilon_L} \cdot \left( \frac{\tau(t)}{\tau_0} \right)^{\varepsilon_{\tau}}
+    \end{aligned}
+    \right.
+\end{equation}
+where $D(t)$ is the destination attractiveness,
+and $\varepsilon_E$, $\varepsilon_L$, $\varepsilon_S$, and $\varepsilon_{\tau}$ are the elasticities of respective variables.
+
+\textit{\textbf{Sustainable Tourism Index ($STI$):}}
+
+In the next $T$ years, we choose to calculate $STI$ using the following formula:
+\begin{equation}
+    STI = \int_0^T e^{-rt} \left[ w_1 \cdot R(t) + w_2 \cdot E(t) + w_3 \cdot S(t) \right] dt
+\end{equation}
+where $r$ is social discount rate, which is used to convert future revenues and costs into their present equivalent value.
+In this model, we set $r = 2.5\%$, similar with the actual discount rates applied to public projects in many countries, balancing intergenerational equity with practical feasibility. 
+$T$ is the time horizon for evaluating sustainable tourism, set to 20 years to capture both short-term and long-term impacts.
+
+\textit{\textbf{Physical and Policy Constraints:}}
+
+Considering the impact of real-world conditions, we have established the following constraints to ensure the model better aligns with actual life:
+\begin{equation}
+\setlength{\arraycolsep}{0pt}
+\kern-\nulldelimiterspace
+\left\{
+\begin{array}{@{}l}
+V(t) \leq V_{\text{max}} , L(t) \leq L_{\text{max}}\\
+E(t) \geq E_{\text{min}} , S(t) \geq S_{\text{min}}\\
+\tau_{\text{min}} \leq \tau(t) \leq \tau_{\text{max}} , \alpha_E, \alpha_L, \alpha_S \geq 0\\
+\end{array}
+\right.
+\end{equation}
+
+\subsection{Data Acquisition and Preprocessing}
+
+\subsection{Model Calculation}
+\begin{algorithm}[H]
+    \caption{Calculation of Undetermined Parameters}
+    \begin{algorithmic}
+        \REQUIRE Number of tourists $V$, areas of glacier, traffic pressure index, water resource stress index, tourist expenses $\tau$ in recent years.
+        % 主体逻辑
+        \FOR{$t = 0$ \TO $50$}
+            \STATE Use areas of glacier to caculate $E(t)$.
+            \STATE Use number of tourists to obtain $V(t)$.
+            \STATE According to the data obtained, $C(t) = 0.25 \cdot V(t)$ and $I_E = 0$ since the goverment didnot spend on glacier protection.
+            \STATE Calculate $a$ and $\lambda_E$.
+        \ENDFOR
+        \FOR{$t = 0$ \TO $20$}
+            \STATE Use number of tourists to obtain $V(t)$.
+            \STATE Use data like numbers of passengers, daily traffic and total congestion to caculate traffic pressure index.
+            \STATE Use data like water-supply and sewage-treatment pressure to caculate water resource stress index.
+            \STATE Given that Juneau is a tourist city, we assigned weights of 0.6 and 0.4 to the two indicators respectively.
+            \STATE Calculate $L(t)$.
+            \STATE According to the data obtained 
+        \ENDFOR
+
+        \FOR{$t = 0$ \TO $20$}
+            \STATE Use number of tourists to obtain $R(t)$ and $R_{tax}(t)$.
+            \STATE Given that locals are becoming disgruntled when the number of visitors is around 20,000, so we assume $V_{conf} = 15,000$.
+        \ENDFOR
+        \RETURN parameters $a$, $\lambda_E$, $\eta_E$, $\lambda_L$, $\delta_L$, $\eta_L$, $\omega$, $\eta_S$, $\theta$, $\mu$, $\phi$, $c$, $\varepsilon_E$, $\varepsilon_L$, $\varepsilon_S$, and $\varepsilon_{\tau}$.
+    \end{algorithmic}
+\end{algorithm}
+
+\section{Problem 2: Sensitivity Analysis}
+\section{Problem 3: Model Adaptation}
+\section{Model Analysis}
+\textit{\textbf{Strengths}}
+\begin{enumerate}
+    \item When setting the tourism model, we considered multiple factors such as environmental quality, infrastructure status, community welfare, and carbon footprint, making the model more comprehensive and realistic.
+    \item The model incorporates feedback mechanisms, allowing for dynamic adjustments based on changing conditions, enhancing its adaptability.
+    \item In the model constructing processes, we compare the constant parameters calculated from real data in the model with those in the real world, finding that they are in good agreement, which validates the model's accuracy.
+    \item Quantifying abstract indicators using appropriate metrics—such as representing environmental quality through glacier area, and measuring infrastructure quality via traffic congestion levels and water supply—enhances the model's feasibility. 
+\end{enumerate}
+
+\textit{\textbf{Weaknesses}}
+\begin{enumerate}
+    \item Due to the lack of data used to fit hyperparameters, there may be some errors in the estimation of hyperparameters in problem 1
+    \item The model does not account for unexpected events such as natural disasters or pandemics, which can significantly impact tourism dynamics.
+\end{enumerate}
+\section{Conclusion}
+Nowadays, environmental degradation and the unbalanced development of tourism in Juneau remain ongoing concerns for the state of Alaska.
+Therefore, accurately modeling local tourism patterns and environmental changes, along with establishing effective evaluation systems and response strategies, is crucial for the sustainable development of the tourism industry.
+
+In this project, we first carefully screened the dataset to remove outliers.
+Subsequently, we employed differential equations to construct a model simulating the interactions among the environment, infrastructure, tourists, and local residents.
+Using mathematical tools, we calculated the overall sustainability level through objective weighting. 
+Next, we proposed a sensitivity analysis strategy to identify variables significantly impacting the final sustainability score, thereby providing appropriate policy directions for the City of Juneau.
+Finally, we attempted to transfer this model to other regions.
+By adjusting the weights between indicators based on regional characteristics, we enhanced the model's applicability to each area and provided tailored recommendations suited to local conditions.
+
+\newpage
+\section*{References}
+\noindent
+\begin{enumerate}[
+    label={[\arabic*]},  
+    leftmargin=*,        % 序号自动适配页面
+    itemindent=-2em,     % 序号左移
+    labelwidth=2em,      % 序号宽度
+    align=left,          % 左对齐
+    itemsep=4pt          % 文献间小间距
+]
+    \item Johnston Robert J, Tyrrell Timothy J. A Dynamic Model of Sustainable Tourism. \textit{Journal of Travel Research}, 2005, 44(2): 124-134.
+    \item Arbolino Roberta, Multi-objective optimization technique: A novel approach in tourism sustainability planning, \textit{Journal of Environmental Management}, 2021, 285: page 112016.
+\end{enumerate}
+
+\newpage
+\section*{Report on use of AI}
+\thispagestyle{empty}
+\addtocounter{page}{-1}
+Our team, 2625065, utilized AI tools - \textit{Chatgpt} and \textit{deepseek} - in a cautious and well-defined manner during the process of solving the 2026 MCM Problem B.
+The use of these AI  tools was supplementary to our own efforts, aiming to enhance efficiency and gain additional  perspectives without compromising the integrity and originality of our work.
+We decided to  leverage AI tools to assist in certain aspects of our research and model development while ensuring that the core intellectual work remained our own.
+\begin{enumerate}
+    \item OpenAI \textit{Chatgpt} \\
+    Query:<who are you> \\
+    Output: \\
+    \item \textit{deepseek} \\
+    Query:<who are you> \\
+    Output: \\
+\end{enumerate}
+
+\end{document}

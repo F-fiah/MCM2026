@@ -1,0 +1,15 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Problem Background}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Clarification and Restatements}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Model Assumptions}{4}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Our Work}{5}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Reasonable Assumptions}{6}{section.2}%
+\contentsline {section}{\numberline {3}Problem 1: Model for Sustainable Tourism}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Method Overview}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Model Construction}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Data Acquisition and Preprocessing}{9}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Model Calculation}{9}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Problem 2: Sensitivity Analysis}{10}{section.4}%
+\contentsline {section}{\numberline {5}Problem 3: Model Adaptation}{10}{section.5}%
+\contentsline {section}{\numberline {6}Model Analysis}{10}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion}{10}{section.7}%

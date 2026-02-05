@@ -1,1 +1,0 @@
-load('dataA_27.mat')

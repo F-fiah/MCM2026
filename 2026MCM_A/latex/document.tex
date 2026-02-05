@@ -1,0 +1,718 @@
+\documentclass{mcmthesis}
+ %\documentclass[CTeX = true]{mcmthesis}  % 当使用 CTeX 套装时请注释上一行使用该行的设置
+\mcmsetup{tstyle = \color{red}\bfseries,  % 修改题号，队号的颜色和加粗显示，黑色可以修改为 black
+          tcn = 2625065 , problem = A,     % 修改队号，参赛题号
+          sheet = true, titleinsheet = true, keywordsinsheet = true,
+          titlepage = false, abstract = true}
+
+  %四款字体可以选择
+  %\usepackage{times}
+  %\usepackage{newtxtext}
+  %\usepackage{palatino}
+\usepackage{txfonts}
+\usepackage{amsmath}
+\usepackage{enumitem}
+
+\usepackage{caption}  
+\captionsetup[figure]{font=small}   % 将图标题字号设为small
+\captionsetup[table]{font=small}    % 将图标题字号设为small
+
+\usepackage{indentfirst}  % 首行缩进，注释掉，首行就不再缩进
+\usepackage{esint}        % 积分号
+\usepackage{subcaption}   % 并排图片
+\usepackage{floatrow}     % 并排图片
+
+\usepackage{float}
+\floatstyle{plaintop}
+\restylefloat{table}
+
+\usepackage{xcolor}       % 颜色支持
+\usepackage{tabularray}   % 增强表格功能
+
+\usepackage[style=numeric,backend=biber]{biblatex}  % APA风格: style=apa
+\ExecuteBibliographyOptions{sorting=none}           % 按引用顺序
+\addbibresource{references.bib}                     % bib参考文献可用kimi生成
+
+% 修复fancyhdr警告
+\setlength{\headheight}{14pt}
+\addtolength{\topmargin}{-1.6pt}  % 可选：保持总版心不变
+
+\setcounter{tocdepth}{2}  % 设置目录到二级标题, 将目录控制在1页
+                          % 若可接受目录2页, 注释掉该句, 将到三级标题
+                          
+\title{Veils of Uncertainty: Weaving Risk into the Tapestry of Preservation
+Under the Weather's Watch}
+
+\date{\today}
+
+\usepackage{totcount}
+\regtotcounter{page}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Page \thepage\ of 22}
+\lhead{Team \#2625065}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyfoot{}
+
+\usepackage{nameref}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black} 
+
+\setcounter{tocdepth}{3}
+
+\begin{document}
+
+\begin{abstract}
+{
+\fontsize{13}{18}\selectfont   
+
+Smartphone batteries often exhibit unpredictable lifetimes under similar conditions due to the complex coupling of power consumption, temperature, internal resistance, and electrochemical nonlinearity. To address this, we develop a \textbf{continuous-time, physics-informed model} that predicts state-of-charge (SOC) evolution and remaining discharge time.
+
+Our approach begins with an idealized baseline model, which we incrementally enhance by integrating \textbf{realistic, component-level power consumption} (screen, CPU, network, etc.) and \textbf{coupled thermal-electrical dynamics}. The model explicitly accounts for temperature-dependent open-circuit voltage, internal resistance, and efficiency. The governing differential equations are solved using a \textbf{4th -- 5th order Runge-Kutta method}, while the complex dependence of internal resistance on SOC and temperature is captured via \textbf{Gaussian Process Regression (GPR)}.
+
+A key innovation is a \textbf{physically interpretable shutdown criterion} based on terminal voltage collapse, rather than a fixed SOC threshold. This enables accurate time-to-empty predictions and explains premature shutdown under high load, low temperature, or aging. Model validation across multiple usage scenarios shows close alignment with observed trends. \textbf{Global sensitivity analysis (using Sobol indices)} identifies internal resistance and temperature-dependent efficiency as the dominant sources of prediction uncertainty.
+
+The model's \textbf{integrated, principled framework} and \textbf{incremental, interpretable design} allow clear attribution of battery life loss to specific usage patterns and environmental conditions. We further demonstrate its extensibility to other devices (e.g., laptops, smartwatches) and derive practical user recommendations for extending battery life.
+
+\begin{keywords}
+    Smartphone Battery Modeling; State of Charge (SOC); Time-to-Empty Prediction; Power Consumption Decomposition; Temperature Effects; Internal Resistance; Sensitivity Analysis; Battery Aging
+\end{keywords}
+}
+\end{abstract}
+\maketitle
+
+\newpage
+\tableofcontents
+
+\newpage
+\section{Introduction}
+
+\subsection{Problem Background}
+Smartphones are indispensable in modern life, yet their battery behavior often appears unpredictable.
+A device may easily last a full day under certain conditions, while in others it may drain within hours.
+This variability arises because battery depletion is a tightly coupled process involving hardware components, software activity, environmental conditions, and user behavior.
+
+Major contributors to power consumption include the display (brightness and refresh rate), processor workload, wireless communication,particularly under weak signal conditions, and numerous background applications and system services.
+In addition, lithium-ion batteries exhibit inherent nonlinearity: terminal voltage, internal resistance, and effective capacity depend on the state of charge, ambient temperature, and battery aging. However, current battery life estimates provided by smartphone operating systems typically rely on coarse averages or heuristic rules, which fail to capture these dynamic and interacting effects.
+
+Therefore, a continuous-time mathematical model grounded in physical principles is needed to describe the evolution of battery state of charge over time.
+Such a model can explain differences in power consumption across usage scenarios, improve time-to-empty predictions, and quantify the impact of key factors such as screen usage, network activity, and temperature.
+Beyond improving user-facing battery estimates, this framework also provides a theoretical basis for more intelligent power management strategies in smartphone operating systems.
+
+\begin{figure}[H]
+    \centering       
+    \includegraphics[width=0.6\linewidth]{background.png} 
+    \caption{Conceptual illustration of coupled influences on smartphone battery.}  
+    \label{fig_background}
+\end{figure}
+
+\subsection{Restatement of the Problem}
+Considering the background information and restricted conditions identified in the problem
+statement, we need to solve the following problems:
+\begin{enumerate}
+    \item  Establish a continuous-time model using continuous-time equations or systems of equations to represent the state of charge of a battery and perform sensitivity analysis.
+    \item  Apply the established model to estimate the remaining discharge time of the battery under different initial states of charge and usage scenarios, and compare the predicted results with the actual outcomes.
+    \item  Examine how the model's predictions change when the assumed values, parameter values, and usage patterns are altered.
+    \item Give practical recommendations for cellphone users to yield the largest improvements in battery life.
+\end{enumerate}
+
+\subsection{Our work}
+The following figure describes our work in detail.
+We firstly constructed an ideal model in which the mobile phone maintains constant power consumption, battery internal resistance, and temperature.
+After that, we sequentially examined the actual variations in power consumption, temperature, and internal resistance, and systematically analyzed the coupling relationship among these three factors.
+
+Overall, we adopt an incremental approach, going through a comprehensive process of preparing data, constructing the models, analyzing the models, and discussing the results.
+
+\begin{figure}[H]
+\small
+\centering
+\includegraphics[width=\linewidth]{our_work.png}
+\caption{Flow Chart of Our Work}
+\label{our_work}
+\end{figure}
+
+\section{Model Preparations}
+
+\subsection{Data Collection}
+Before constructing our model, we collect data related to modeling smartphone from various reliable sources,
+including power consumption of different component, values of OCV and battery internal resistance at different SOC and temperature conditions, and magnitude of energy conversion efficiency at different temperatures.
+
+The data used in this study is obtained from the following sources:
+\begin{itemize}
+    \item Dataset provided in the paper's literature. For example, the datasets provided in the tables of the paper, as well as the data information contained in the visualization results.
+    \item Data websites such as \href{https://data.mendeley.com/datasets/m9w7grpjc7/1}{Mendeley Data} and \href{https://depositonce.tu-berlin.de/items/7a9d8a24-a505-4939-a656-ce805093b02b/full}{DepositOnce}.
+    \item Query the AI, for example ChatGPT and DeepSeek to obtain common data.
+\end{itemize}
+
+\subsection{Assumptions and Justifications}
+Considering those practical problems always contain many complex factors, first of all,
+we need to make reasonable assumptions to simplify the model, and each hypothesis is closely
+followed by its corresponding explanation:
+\begin{enumerate}[label=\bfseries\arabic*.]
+\item \textbf{Assumption:} The data we use are accurate and valid. \\
+      \textbf{Justification:} The data employed in this work are obtained from peer-reviewed literature and publicly available datasets that have been widely used in battery and power modeling studies. These sources provide sufficiently reliable measurements for system-level modeling purposes.
+\item \textbf{Assumption:} The smartphone battery is modeled as a single equivalent lithium-ion cell with lumped electrical and thermal parameters. \\
+      \textbf{Justification:} Although practical smartphone batteries may consist of multiple cells or complex internal structures, their external electrical behavior can be effectively captured by a single equivalent cell model for the purpose of SOC evolution and time-to-empty prediction.
+\item \textbf{Assumption:} Spatial non-uniformity of current density and temperature inside the battery is neglected. \\
+      \textbf{Justification:} Our work focuses on system-level energy behavior rather than detailed electrochemical field distributions. The lumped-parameter assumption significantly simplifies the model while retaining sufficient accuracy for macroscopic SOC and voltage predictions.
+\item \textbf{Assumption:} Within a given usage scenario, the power consumption parameters of individual components are assumed to be time-invariant. \\
+      \textbf{Justification:} Although component power consumption may vary across different operating modes, it remains approximately constant within a fixed usage scenario. This assumption enables scenario-level analysis without introducing unnecessary mode-switching complexity.
+\item \textbf{Assumption:} User behavior is modeled as a stationary stochastic process over the observation window. \\
+      \textbf{Justification:} Although individual user actions are inherently irregular, their aggregated effect over sufficiently long periods can be approximated as stationary. This assumption is commonly adopted in system-level power modeling to enable tractable analysis.
+\end{enumerate}
+
+\subsection{Notations}
+The key mathematical notations used in this paper are listed in Table \ref{parameter}. 
+\begin{table}[H]     
+\small
+\centering          
+\caption{Variations and Parameters}  
+\renewcommand{\arraystretch}{1.1}
+\label{tbl_notation}         
+\begin{tabular}{>{\centering\arraybackslash}m{0.15\textwidth} >{\centering\arraybackslash}m{0.6\textwidth} >{\centering\arraybackslash}m{0.1\textwidth}}
+\toprule             
+{\textit{Symbols}}   &  \textit{Definition}   &  \textit{Unit}    \\
+\midrule            
+OCV & Open Circuit Voltage & $v$ \\
+SOC & State of Charge &  \\
+$R_i$ & Battery Internal Resistance & $\Omega$ \\
+$\eta$ &  Energy Conversion Efficiency &  \\
+$A_\text{screen}$ & Screen Size & $m^2$ \\
+$C_\text{th}$ & Thermal Capacitance (battery heat storage capacity) & $F$ \\
+$R_\text{th}$ & Thermal Resistance (heat transfer resistance) & $\Omega$ \\
+\bottomrule         
+\end{tabular}
+\vspace{2pt} 
+\begin{flushleft} \small
+$^{*}$ There are some variables that are not listed here and will be discussed in detail in each
+section.
+\end{flushleft}
+\end{table}
+
+\section{Model Design}
+\subsection{An Ideal Model}
+First of all, we need to analyze how the State of Charge (SOC) changes over time under conditions of constant power consumption and stable ambient temperature.
+
+To simplify the initial analysis, we impose constraints on this initial model as follow, which we will discuss separately later.
+\begin{itemize}
+    \item Temperature of the environment remains at a constant $25^\circ\text{C}$.
+    \item Total power consumption and battery energy conversion efficiency of the mobile phone remains unchanged.
+    \item The effects of battery polarization and diffusion on internal resistance are neglected in this model.
+    \item Battery aging is not considered in this model.
+\end{itemize}
+
+The common equation to calculate the \textit{SOC} is given by Eq.\eqref{SOC},
+where $Q(t)$ and $Q_{\text{max}}$ represent the current charge level and maximum capacity permitted by the system respectively.
+\begin{equation}
+\label{SOC}
+\text{SOC}(t) = \frac{Q(t)}{Q_{\text{max}}}
+\end{equation}
+
+Given that mobile phones typically operate at a constant power level in real-world scenarios,
+our team opted to formulate the SOC differential equation using power $P$ rather than current $I$.
+
+Based on the derivation from physical and electrical principles,
+we have obtained the formula for the change in SOC over time under a given power $P$:
+\begin{equation}
+\frac{d\text{SOC}(t)}{dt} = -\frac{1}{Q_{\text{max}}} \cdot \frac{\text{OCV}\bigl(\text{SOC}(t)\bigr) - \sqrt{\text{OCV}\bigl(\text{SOC}(t)\bigr)^2 - 4R_i \cdot \frac{P}{\eta}}}{2R_i}
+\label{eq_dSOC_dt}
+\end{equation}
+
+For the functional relationship between $OCV$ and SOC, we opted to fit an exponential model\hyperlink{ref1}{[1]} as follows:
+\begin{equation}
+\text{OCV} = a_1 e^{b_1 \text{SOC}} + a_2 e^{b_2 \text{SOC}} + c \text{SOC}^2
+\label{eq:vocv_soc}
+\end{equation}
+since structure is relatively simple and, to a certain extent, reflects the trends of electrochemical reactions within the battery.
+
+\begin{figure}[H] 
+    \centering       
+    \includegraphics[width=\linewidth]{ocv_soc.png} 
+    \caption{OCV-SOC fitting curves for $45^\circ$; $25^\circ$; $0^\circ$; $-20^\circ$}  
+    \label{fig_ocv_soc}
+\end{figure}
+
+\begin{figure}[H] 
+    \centering       
+    \includegraphics[width=\linewidth]{soc-t.png} 
+    \caption{Time-dependent curve for SOC}  
+    \label{fig_soc_time}
+\end{figure}
+As shown in Figure \ref{fig_soc_time}, the SOC-t curve we calculated approximates a straight line, results consistent with actual conditions—namely,
+that the battery capacity decreases relatively uniformly over time. And OCV decreases with increasing time, which is in line with our common sense.
+
+\subsection{Power Consumption \textbf{$P$}}
+Considering that the power consumption $P$ is not constant under actual mobile phone usage conditions,
+we optimize the previously established ideal model in terms of power to enable it to more accurately simulate real-world scenarios.
+
+In this section, we categorize mobile phone power consumption into five types \hyperlink{ref6}{[6]}:
+\begin{itemize}
+    \item Screen size and brightness.
+    \item Processer load such as CPU and GPU.
+    \item Network activity like Wi-Fi and cellular data.
+    \item Backend application.
+    \item GPS usage.
+\end{itemize}
+Previous measurement-based studies\hyperlink{ref12}{[12]} have shown that, at the system level, the power consumption of major smartphone components can be reasonably approximated as additive. Thus:
+\begin{equation}
+    P_\text{total} = P_\text{screen} + P_\text{processor} + P_\text{network} + P_\text{GPS} + P_\text{backend}
+\end{equation}
+
+\subsubsection{Screen Size and Brightness}
+For the OLED displays commonly used in our smartphones today, each pixel possesses its own self-emitting intensity.
+Consequently, the overall screen brightness is determined by both the pixel brightness and the brightness distribution of the displayed content.
+
+The power consumption of screen can be expressed as follows based on theoretical basis\hyperlink{ref2}{[2]} and engineering experience:
+\begin{equation}
+    P_\text{screen}(t) = P_\text{base} + k \cdot A_\text{screen} \cdot APL(t) \cdot L(t)
+\end{equation}
+where $P_\text{base}$ indicates fixed drive power consumption, $k$ is Equivalent luminous power density per unit area,
+APL and $L$ represent average screen brightness and indicates screen brightness respectively.
+
+\subsubsection{Processor load}
+Processor load refers to the fraction of the processor's computational capacity that is actively used at a given time.
+It reflects how intensively the CPU (and related processing units) are executing instructions,
+and it directly influences dynamic power consumption through changes in operating frequency, voltage, and active circuit area.
+
+Since we cannot measure certain critical data points of the phone, such as equivalent capacitance,
+we adopt the following more feasible method to calculate the processor's power consumption:
+\begin{equation}
+    P_{\text{processor}} = P_{\text{min}} + (P_{\text{max}} - P_{\text{min}})u(t)
+\end{equation}
+where $P_{\text{max}}$ and $P_{\text{idle}}$ represent the processor's power consumption under full load and idle conditions respectively, 
+and $u(t)$ represents processor usage frequency. 
+
+\subsubsection{Network activity}
+Network activity describes the level of wireless communication between the smartphone and external networks, including cellular and Wi-Fi connections.
+The energy consumption of network activity can be primarily divided into three parts:
+\begin{enumerate}[label=\bfseries\arabic*.]
+    \item \textbf{Data Flow State:} In this state, the mobile phone is currently engaged in continuous data transmission or reception, for example watching videos and playing video games,
+    requiring the wireless module to remain in a high-performance, high-power consumption operating mode for an extended period.
+    \item \textbf{Tail State:} After a data transmission completes, even if no new data arrives immediately,
+    the wireless module is still forced by the network protocol to remain in a higher power consumption state for a period of time.\hyperlink{ref5}{[5]}
+    \item \textbf{Connected-Idle State:} No active data transmission occurs; only minimal connectivity and monitoring mechanisms are maintained.
+\end{enumerate}
+\begin{equation}
+    P_{\text{network}} = P_{\text{data}} + P_{\text{tail}} + P_{\text{net\_idle}}
+\end{equation}
+Among them, $P_{\text{data}}$ is primarily determined by the data transmission rate,
+while $P_{\text{tail}}$ is mainly determined by the frequency and duration of tail state occurrences.
+Therefore:
+\begin{equation}
+    P_{\text{network}} = P_{\text{net\_idle}} + \alpha_{\text{rx}} \cdot R_{\text{rx}} + \alpha_{\text{tx}} \cdot R_{\text{tx}} + \lambda \cdot T_{\text{tail}} \cdot P_{\text{tail}}
+\end{equation}
+where $\alpha_{\text{rx}}$ and $\alpha_{\text{tx}}$ represent the data input and output rates respectively,
+$R_{\text{rx}}$ and $R_{\text{tx}}$ represent the power consumption coefficients for the input and output data rates per unit,
+and $\lambda$ represents the frequency of tail state occurrences.
+
+\subsubsection{Backend application}
+Background applications primarily consume power in the following ways:\hyperlink{ref7}{[7]}
+\begin{enumerate}[label=\bfseries\arabic*.]
+    \item \textbf{Idle-Blocking:} Prevent the phone from entering deep sleep, keeping the system in a persistent operational state.
+    \item \textbf{Background Network Trigger:} Triggering network communication causes the wireless module to enter a higher power consumption state.
+\end{enumerate}
+both of which have been analyzed above; therefore, we will not elaborate further in this section.
+
+\subsubsection{GPS}
+GPS power consumption is categorized into three scenarios: satellite navigation, positioning without real-time updates, and power off.
+
+Thus, it can be expressed as follows:
+\begin{equation}
+    P_{\text{GPS}} = 
+    \begin{cases} 
+    P_{\text{track}}, & \text{tracking} \\
+    P_{\text{duty}}, & \text{duty cycle} \\
+    0, & \text{power off}
+    \end{cases}
+\end{equation}
+
+\subsection{Temperature \textbf{$T$}}
+
+Although many experimental studies report a temperature-dependent reduction in battery capacity,
+this effect primarily reflects a decrease in usable capacity due to increased internal resistance and premature voltage cutoff, rather than a change in the nominal capacity.\hyperlink{ref3}{[3]}\hyperlink{ref4}{[4]}
+The present model explicitly captures this distinction.
+
+Therefore in this work, the maximum capacity $Q_{max}$ is treated as temperature independent,
+and the effects of temperature on SOC are mainly on battery internal resistance, the OCV-SOC curve, and energy conversion efficiency.
+The analysis of the battery internal resistance will be covered in the next section.
+
+\subsubsection{Effect on OCV-SOC curve}
+From Figure\ref{fig_ocv_soc} we obtained the fitted curves of OCV-SOC at four different temperatures.
+By performing monotonic interpolation of the OCV values across the temperature range for each SOC grid point, we calculated the OCV-SOC relationship at any given temperature.
+This method ensures physical consistency without compromising the stability of the curve, meaning that no unphysical oscillations occur namely.
+\begin{figure}[H]
+    \caption{Interpolate OCV-SOC curve using the adjacent temperature}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{0_25.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{15.png}
+    \end{minipage}
+\end{figure}
+
+\subsubsection{Effect on Energy Conversion Efficiency $\eta$}
+Temperature affects the energy conversion efficiency of lithium-ion batteries mainly by altering irreversible energy losses such as heat.
+The energy conversion efficiency exhibits a non-monotonic dependence on temperature,
+with degraded efficiency at low or high temperatures and an optimum at moderate temperatures.
+
+We use the following engineering empirical formula to quantify this relationship:
+\begin{equation}
+    \eta(T) = 
+    \begin{cases}
+    0.70 + 0.0075(T + 20), & -20 \leq T < 0 \\
+    0.85 + 0.004T, & 0 \leq T < 25 \\
+    0.95 + 0.001(T - 25), & 25 \leq T \leq 45
+\end{cases}
+\end{equation}
+
+\subsubsection{Variation of Temperature with Power Consumption}
+The variation of battery temperature is driven by a balance between internally generated heat from electrical and electrochemical losses and heat transfer to the surrounding environment.
+We use a common first-order thermal model as follow to represent it:
+\begin{equation}
+    \begin{cases}
+        C_{\text{th}} \dfrac{dT}{dt} = P_{\text{loss}} - \dfrac{T - T_{\text{amb}}}{R_{\text{th}}} \\[10pt]
+        P_{\text{loss}} = (1 - \eta) \dfrac{P}{\eta}
+    \end{cases}
+\end{equation}
+where $T_{\text{amb}}$ denotes the ambient temperature.
+
+\subsection{Battery Internal Resistance \textbf{$R_i$}}
+\label{subsec_Ri}
+The internal resistance of a lithium-ion battery is not a constant parameter, but a state-dependent quantity influenced by operating temperature, SOC, current rate, and intrinsic electrochemical properties of electrodes and electrolyte,
+with the first two factors being dominant\hyperlink{ref8}{[8]}.
+
+Due to enhanced electrolyte conductivity and accelerated electrochemical kinetics, battery internal resistance decreases with increasing temperature.\hyperlink{ref9}{[9]}
+And the internal resistance exhibits a nonlinear dependence on SOC, with a pronounced increase at low SOC due to reduced lithium-ion availability and increased polarization effects.
+
+Based on the internal resistance $R_i$ data we obtained at different temperatures and SOCs,
+we employed a Gaussian Process Regression (GPR) model for fitting, thereby obtaining the internal resistance values at any SOC across a wide temperature range.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Ri.png}
+    \caption{Line chart of internal resistance changing with SOC at different temperatures}
+    \label{fig_Ri_line}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Ri3.png}
+    \caption{3D diagram of the change of internal resistance with T and SOC}
+    \label{fig_Ri_3d}
+\end{figure}
+
+\section{Time-to-Empty Predictions}
+\subsection{Power-off Determination Criteria}
+During smartphone operation, the device's shutdown is not only directly triggered by the depletion of remaining battery capacity, namely $\text{SOC}=0$,
+but also occurs when the battery can no longer maintain the minimum operating voltage required by the system, which is typically around 3.2 volts.
+
+When the OCV drops below it, the power management IC triggers the Undervoltage Lockout (UVLO) protection mechanism to prevent unstable battery operation.
+
+What's more, in Equation \ref{eq_dSOC_dt}, to ensure the calculation yields a meaningful result, the value inside the square root must be greater than zero.
+Physically, this represents the minimum voltage at which meeting power demand is physically achievable.
+
+Thereby, we conclude that the shutdown occurs in any one of the following three situations:
+\begin{equation}
+    \begin{cases}
+        \text{SOC} = 0 \\[2pt]
+        \text{OCV} = \text{OCV}_\text{UVLO} \\[4pt]
+        \text{OCV} = \sqrt{4R_i \cdot \frac{P}{\eta}} \\
+    \end{cases}
+\end{equation}
+
+\begin{figure}[H]
+    \centering       
+    \includegraphics[width=\linewidth]{shutdown.png} 
+    \caption{The System Mechanism of Mobile Phone Shutdown}  
+    \label{fig_shutdown}
+\end{figure}  
+
+\subsection{Power Consumption Setting}
+Based on real-life scenarios, our team categorized mobile smartphone usage into nine distinct situations and assigned different power consumption values to each.
+\begin{table}[H]
+  \centering
+  \caption{Various Device Usage Scenarios}
+  \label{tbl_usage}
+  \includegraphics[width=\textwidth]{usage.png}
+\end{table}
+
+\subsection{Internal Resistance Setting}
+As shown in \autoref{subsec_Ri} the internal resistance is known to be primarily dependent on temperature and state of charge.
+However, experimental observations indicate that even under fixed temperature and SOC conditions, the internal resistance does not remain strictly constant, but instead exhibits small-scale fluctuations.
+These variations originate from a range of secondary factors that are difficult to explicitly quantify, such as manufacturing inconsistencies, transient electrochemical processes, aging heterogeneity, and measurement uncertainty.
+
+To capture this intrinsic variability without introducing excessive model complexity, the internal resistance is modeled as a nominal value determined by temperature and SOC, superimposed with a stochastic perturbation, namely a zero-mean stochastic noise. 
+This noise term is used to represent the aggregated effect of unmodeled influences, allowing the model to more faithfully reflect the observed behavior of real battery systems.
+
+\subsection{Result Analysis}
+According to Table\ref{tbl_usage},  we assign appropriate values to the power consumption of the phone under each usage scenario.
+After accounting for the impact of power on battery temperature and the coupling relationship between internal resistance and both temperature and SOC,
+computational methods are used to determine the time until the phone's battery depletion under each scenario base on \autoref{eq_dSOC_dt}.
+
+The final result are as follow:
+\begin{figure}[H]
+    \begin{subfigure}{0.48\textwidth}
+    \label{fig_result}
+    \centering
+    \includegraphics[width=\linewidth]{result1.png}
+    \caption{Average Power Consumption and Total Discharge Time of each Usage Scenario}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{result2.png}
+    \caption{Power Consumption Distribution by Component in each Usage Scenario}
+    \end{subfigure}
+    \caption{Final Result of Time-to-Empty Predictions}
+\end{figure}
+
+\section{Sensitivity Analysis}
+\subsubsection{Analysis of Sensitivity Results - Parameter and Usage Patterns}
+In the model of sensitivity analysis, we mainly analyzed the effects of key parameters and variables, such as CPU utilization and ambient temperature, on battery performance.
+Simultaneously, we employ the Monte Carlo method to perform random sampling on multiple parameters concurrently, simulating the impact of parameter uncertainty on battery lifespan.
+The results of the sensitivity analysis are shown in Figures \ref{fig_sen} and \ref{fig_sen_pi}.
+\begin{figure}[H]
+    \label{fig_sen}
+    \centering
+    \includegraphics[width=0.65\linewidth]{sensitivity.png}
+    \caption{Sensitivity Analysis - Changes of Key Parameters}
+\end{figure}
+\begin{figure}[H]
+    \label{fig_sen_pi}
+    \centering
+    \includegraphics[width=0.6\linewidth]{sensitivity_pie.png}
+    \caption{Pie Chart of Parameter Sensitivity}
+\end{figure}
+
+The conclusion can be drawn from the two graphs are that the impacts of parameters and variable are main determined by processor utilization and screen brightness, which are highly correlated with user usage patterns.
+In comparison, physical parameters such as network transmission rate, battery capacity and thermal parameters are relatively less influential on battery.
+
+This finding underscores the significant impact of user patterns on mobile phone battery performance while also highlighting the importance of providing users with practical recommendations to improve battery life.
+
+\subsection{Implications of Sensitivity Results: Uncertainty Analysis}
+Sensitivity analysis is conducted to identify the dominant factors influencing battery performance and to evaluate the robustness of the proposed model under parameter variations. Due to the coexistence of usage-dependent, system-level, and battery-intrinsic parameters with different uncertainty characteristics, this analysis helps clarify how modeling abstractions and parameter variability affect the predicted battery behavior.
+
+The uncertainty in the model mainly originates from usage-related variability, model abstraction, and unmodeled system interactions. Processor utilization exhibits the highest sensitivity because it aggregates multiple correlated activities, including operating system scheduling, background execution, and frequency scaling, thereby concentrating several sources of uncertainty into a single parameter. In contrast, display, network, and thermal parameters show more limited variability and weaker uncertainty propagation within the considered operating range. Consequently, the sensitivity ranking reflects both physical influence and uncertainty aggregation rather than a strict hierarchy of component-level importance.
+
+\section{Battery Aging}
+The aging of lithium-ion batteries refers to the phenomenon where the reversible lithium storage capacity and transmission performance of the battery continuously degrade due to a series of irreversible electrochemical side reactions occurring at the electrode and electrolyte interface.
+
+According to electrochemical principles, aging primarily affects battery performance through the following three pathways\hyperlink{ref10}{[10]}\hyperlink{ref11}{[11]}, as shown in Figure\ref{fig_aging}
+\begin{itemize}
+    \item Loss of Lithium Inventory (LLI).
+    \item Loss of Active Material (LAM).
+    \item Increase of resistance.
+\end{itemize}
+\begin{figure}[H]
+    \centering       
+    \includegraphics[width=\linewidth]{aging.png} 
+    \caption{Graphic representation of aging mechanisms, and external factors}
+    \label{fig_aging}
+\end{figure}
+We use the following formula to represent this process:
+\begin{equation}
+    \label{eq_aging}
+    \large
+    \begin{cases}
+        \dfrac{d\delta}{dt} \propto \dfrac{1}{\delta} \\[10pt]
+        Q_{\text{loss}} = \int i_{\text{SEI}} \, dt \\[10pt]
+        R_{\text{SEI}} \propto \delta \\
+    \end{cases}
+\end{equation}
+where $\delta$ represents the thickness of the solid electrolyte interphase (SEI) layer,
+$i_{\text{SEI}}$ represents SEI subreaction current, and $R_{\text{SEI}}$ represents the resistance caused by SEI.
+
+In conclusion, the increase in SEI layer thickness and the continuous loss of active lithium during battery aging lead to an increase in battery resistance$R_i$ and a decrease in battery capacity$Q_\text{max}$, respectively.
+
+It is worth noting that despite the significant impact of aging on batteries, our team did not incorporate it into the model.
+This is because battery aging manifests only over extended periods, and its effects are negligible within the brief timeframe of discharging a phone from full to empty.
+However, this does not imply our team ignored the aging phenomenon. By analyzing the battery aging mechanism through Equation\ref{eq_aging}, we can perform a standardized analysis.
+
+\section{Model Extension}
+Based on the model we established, we attempted to extend it to two similar resistive products: laptop and electronic watch.
+
+\subsection{Extend to Laptop}
+In laptos, the incremental power cost caused by background tasks preventing deep sleep is significantly reduced due to more efficient idle-state management.
+Therefore, the parameter$P_\text{processor\_idle}$ should be scaled down accordingly.\
+What's more, the tail-dominated network energy model, which is critical for cellular-connected smartphones,
+becomes less significant on laptop where network interfaces typically operate in a persistent low-power connected state.
+
+Although temperature has been shown to influence system power consumption through mechanisms such as DVFS and thermal throttling,
+its impact is largely indirect and scenario-dependent on platform. In the usage scenarios considered in this study, which primarily involve background activities and network-related operations, temperature variations remain limited.
+Therefore, thermal effects are not modeled explicitly but can be incorporated as a second-order correction if needed.
+
+\subsection{Extend to Electronic Watch}
+Compared with smartphones, smartwatches operate under much stricter energy constraints and fundamentally different usage patterns.
+While the general activity-driven modeling framework remains applicable, the dominant power mechanisms and their relative contributions are significantly altered.
+
+For smartwatch platforms, the proposed power model is reformulated as an event-driven energy model, where total energy consumption is expressed as the sum of sleep energy and discrete activity-related energy costs,
+primarily including display activation, sensor sampling, communication events, and user interactions.
+
+The smartwatch platform represents an extreme case where energy modeling must prioritize discrete events and system wakeups rather than sustained workload states.
+Thus our team extend our model by reformulating time-based power terms into event-based energy terms, removing tail-dominated network components, and explicitly modeling display and sensor-triggered wake-up events.
+
+\begin{figure}[H]
+    \begin{subfigure}{0.48\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{laptop.jpg}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{watch.jpg}
+    \end{subfigure}
+    \caption{Key Adjustments for Extending the Smartphone Model to Laptop and Electronic Watch}
+    \label{fig_extention}
+\end{figure}
+
+\section{Recommendation}
+Based on our research, we have derived the following power-saving recommendations for users:
+\textbf{\textit{First Priority:}}
+\begin{itemize}
+    \item \textbf{Reduce screen brightness:} From the computational results of the model, as shown in Figure\ref{fig_result}, we find that in most usage scenarios, screen power consumption accounts for 40\% to 60\% of the total,
+which represents the screen is the single largest power-consuming component in a smartphone. \textbf{Therefore using dark mode can be particularly effective for OLED screens.}
+    \item \textbf{Enable Airplane Mode in areas with weak signal:} Our study shows that in many cases, the power consumption of the WiFi or cellular data modules can reach 10\% to 20\% of the device's total power draw.
+When signal strength is low, the phone's radio functions continuously search for networks, during which power consumption may surge by up to 300\%.
+Thus, enabling Airplane Mode in weak signal areas is a useful power-saving measure.
+\end{itemize}
+\textbf{\textit{Second Priority:}}
+\begin{itemize}
+    \item \textbf{Prefer using Wi-Fi when available:} Our model indicates that, for the same data throughput, Wi-Fi is typically 2 to 3 times more energy-efficient than cellular networks.
+Thus, using Wi-Fi at fixed locations like home or the office is the better choice.
+    \item \textbf{Lower the screen refresh rate:} During our information gathering, we found that the power consumption of a high-refresh-rate screen is approximately linearly proportional to the refresh rate.
+Reducing it to 60Hz can save 15\% to 25\% of the screen subsystem's power consumption. 
+Thereby lowering the screen refresh rate when unnecessary can significantly reduce the device's energy usage.
+\end{itemize}
+\textbf{\textit{Third Priority: Long-term Maintenance}}
+\begin{itemize}
+    \item \textbf{Avoid extreme temperature environments whenever possible:} Our model found that in extremely low temperatures (e.g., $5^\circ\text{C}$), the maximum capacity of a smartphone's lithium-ion battery may drop to 70\%, which also explains why phones drain faster in winter.
+Simultaneously, in extremely high temperatures (e.g., $45^\circ\text{C}$), the phone's lithium-ion battery ages faster, leading to a corresponding decrease in battery health.
+\end{itemize}
+
+\section{Model Evaluation and Future Discussion}
+\subsection{Strengths}
+\begin{enumerate}[label=\bfseries\arabic*.]
+    \item \textbf{Comprehensive Framework:} Our model comprehensively accounts for the effects of temperature, battery internal resistance, and power consumption across various components, along with battery aging. The coupling relationships between temperature and internal resistance, as well as between power and temperature, have also been carefully analyzed.
+    \item \textbf{Adaptability:} Our model can be applied to other electronic devices, as demonstrated above, obtaining results that closely correspond to the actual situation.
+    \item \textbf{Appropriate Processing of Data:} We employ linear interpolation and Gaussian Process Regression to derive continuous functions from raw discrete data, ensuring computational feasibility while yielding smooth curves and surfaces.
+    \item \textbf{In-Depth Analysis of Mobile Phone Power-off Mechanisms:} Rather than simply equating power-off with $\text{SOC} = 0$, our model systematically analyzes the criteria for determining mobile phone shutdown and imposes joint constraints across three scenarios.
+\end{enumerate}
+
+\subsection{Weaknesses}
+\begin{enumerate}[label=\bfseries\arabic*.]
+    \item \textbf{Data Dependency:} The accuracy of the model depends heavily on the availability and reliability of historical and real-time data, which inevitably contain various errors.
+    \item \textbf{Limited Variable Scope:} The range of input variables and output results does not cover all possible situations, which may constrain the model's comprehensiveness and applicability.
+\end{enumerate}
+
+\subsection{Future Directions}
+\begin{enumerate}[label=\bfseries\arabic*.]
+    \item \textbf{Broader Extension:} Extend the model to a broader range of electrical devices, such as electric vehicles and drones, which convert electrical energy into mechanical energy.
+    \item \textbf{More Complex Simulation:} Consider more complicated scenarios involving sudden changes in power consumption, such as the surge in power consumption when connecting to WiFi.
+\end{enumerate}
+
+\section{Conclusion}
+Our study establishes an advanced framework for smartphone battery state prediction by integrating electrochemical characteristics, thermal dynamics, and multi-component power consumption into a cohesive system.
+Incorporating nonlinear coupling mechanisms, such as the temperature dependence of internal resistance and the dynamic feedback between power dissipation and battery temperature, it provides a principled foundation for accurate time-to-empty estimation.
+Model simulations reveal key relationships among critical variables, including state-of-charge trajectories under different usage scenarios, the dominant role of display power (accounting for 40-60\% of total consumption in active use), and the significant impact of network activity in weak-signal conditions.
+For instance, enabling airplane mode in such scenarios can mitigate power spikes of up to 300\%, while reducing screen brightness directly extends usable battery life.
+
+The model's scalability enables its application across mobile device categories, such as smartphones, laptops, and smartwatches, tailoring the analysis to address platform-specific challenges like tail energy in cellular radios or event-driven power management in wearables.
+However, limitations like reliance on parameterized consumption profiles and simplified treatment of background processes highlight opportunities for future enhancements, including real-time adaptive parameter estimation, integration of battery aging models, and validation under highly variable usage patterns.
+Ultimately, this model paves the way for more transparent and reliable battery analytics, helping users optimize device settings, manufacturers design efficient power management systems, and operating systems provide accurate, context-aware battery forecasts—all while deepening the understanding of energy flows in portable electronics.
+
+
+\newpage
+\section*{References}
+\noindent
+\hypertarget{ref1}{[1]} Ruifeng Zhang, Bizhong Xia, Baohua Li. A Study on the Open Circuit Voltage and State of Charge Characterization of High Capacity Lithium-Ion Battery Under Different Temperature[J]. Energies, 2018, 11(9):2408.\\[8pt]
+\hypertarget{ref2}{[2]} Min-Hao Michael Lu, Hack M, Hewitt R, Weaver M. S., Brown J. J. Power Consumption and Temperature Increase in Large Area Active-Matrix OLED Displays[J]. Journal of Display Technology, 2008, 4(1):47-53.\\[8pt]
+\hypertarget{ref3}{[3]} Loveridge Melanie J., Tan Chaou C., Maddar Faduma M., Remy Guillaume. Temperature Considerations for Charging Li-Ion Batteries: Inductive versus Mains Charging Modes for Portable Electronic Devices[J]. ACS Energy Letters, 2019, 4(5):1086-1091.\\[8pt]
+\hypertarget{ref4}{[4]} Shuai Ma, Modi Jiang, Peng Tao, Chengyi Song, Jianbo Wu. Temperature effect and thermal impact in lithium-ion batteries: A review[J]. Progress in Natural Science: Materials International, 2018, 28(6):653-666.\\[8pt]
+\hypertarget{ref5}{[5]} Kim Yeseong, Jeon Boyeong, Kim Jihong. A Personalized Network Activity-Aware Approach to Reducing Radio Energy Consumption of Smartphones[J]. IEEE Transactions on Mobile Computing, 2016, 15(3):544-557.\\[8pt]
+\hypertarget{ref6}{[6]} Carroll Aaron, Heiser Gernot. An Analysis of Power Consumption in a Smartphone[C]. 2010 USENIX Annual Technical Conference (USENIX ATC 10), Boston, MA, USA, 2010:271-284.\\[8pt]
+\hypertarget{ref7}{[7]} Chen Xiaomeng, Jindal Abhilash, Ding Ning, Hu Yu Charlie, Gupta Maruti, Vannithamby Rath. Smartphone Background Activities in the Wild: Origin, Energy Drain, and Optimization[C]. Proceedings of the 21st Annual International Conference on Mobile Computing and Networking (MobiCom '15), New York, NY, USA, 2015:40-52.\\[8pt]
+\hypertarget{ref8}{[8]} Yang Jing, Wei Xuezhe, Dai Haifeng, Zhu Jiangong, Xu Xudong. Lithium-Ion Battery Internal Resistance Model Based on the Porous Electrode Theory[C]. 2014 IEEE Vehicle Power and Propulsion Conference (VPPC), Coimbra, 2014:1-6.\\[8pt]
+\hypertarget{ref9}{[9]} Chen Lin, Zhang Mo, Ding Yunhui, Wu Shuxiao, Li Yijing, et al. Estimation the internal resistance of lithium-ion-battery using a multi-factor dynamic internal resistance model with an error compensation strategy[J]. Energy Reports, 2021, 7:3050-3059.\\[8pt]
+\hypertarget{ref10}{[10]} Ding Shicong, Li Yiding, Dai Haifeng, Wang Li, He Xiangming. Accurate Model Parameter Identification to Boost Precise Aging Prediction of Lithium-Ion Batteries: A Review[J]. Advanced Energy Materials, 2023, 13(39):2301452.\\[8pt]
+\hypertarget{ref11}{[11]} Zeng Jing, Liu Sifeng. Research on aging mechanism and state of health prediction in lithium batteries[J]. Journal of Energy Storage, 2023, 72:108274.\\[8pt]
+\hypertarget{ref12}{[12]} Pramanik P K D, Sinhababu N, Mukherjee B, et al. Power Consumption Analysis, Measurement, Management, and Issues: A State-of-the-Art Review of Smartphone Battery and Energy Usage[J]. IEEE Access, 2019, 7:182113-182172. \\
+
+\AImatter
+\pagestyle{empty}
+\begin{ReportAiUse}{9}
+\bibitem{AI1}
+DeepSeek \cite{deepseek2025} (Jan 20, 2025 version, DeepSeek-R1) 
+
+Query1: Show me the principles and application scenarios of Gaussian regression models.
+
+Output: Instead of predicting a single value for each input, GPR predicts a probability distribution (a Gaussian). This provides both a prediction (the mean) and a measure of uncertainty (the variance).
+
+(1)It starts with a prior distribution over functions, defined by a mean function (often zero) and a kernel/covariance function (e.g., RBF).
+
+(2)The kernel measures similarity between data points, assuming similar inputs yield similar outputs.
+
+(3)Given training data, it forms a posterior distribution by conditioning the prior on the observed points.
+
+(4)Predictions for new inputs are made by drawing from this posterior, resulting in a predictive mean and confidence interval.
+
+(5)Key Strengths
+
+Uncertainty Quantification: Provides principled confidence intervals for predictions.
+
+Flexibility: Can model complex, non-linear relationships by choosing appropriate kernels.
+
+Works well with small data: Particularly effective when data is scarce but precise.
+
+\bibitem{AI2}
+DeepSeek(Jan 20, 2025 version, DeepSeek-R1) 
+
+Query1: Show me the power consumption of each module in a smartphone.
+
+Output: Here's a concise analysis of smartphone power consumption by key modules, from highest to typical impact:
+
+1. Display (Highest Variable Consumer)
+
+Brightness is the No.1 factor. Max brightness can use 10x more power than low.
+
+Technology: OLED screens save power with black/dark content; LCD uses constant backlight.
+
+Refresh Rate: High refresh rates (120Hz) increase power draw significantly.
+
+2. System-on-Chip (SoC - The Brain)
+
+CPU/GPU: Power scales dramatically with performance. Short bursts are fine, sustained gaming or editing consumes the most power here.
+
+Efficiency Core: Uses low power for background tasks.
+
+Performance Core: High power for demanding apps.
+
+5G Modem: Often a major drain, especially in weak signal areas where it boosts transmission power.
+
+3. Cellular Radio (The "Search" Drain)
+
+Weak Signal = High Power. Constantly searching for or connecting to a distant tower is the biggest radio drain.
+
+5G > 4G > 3G > 2G. Newer technologies are faster but often less power-efficient.
+
+Strategy: Phones use network-sleep strategies and switch to Wi-Fi when possible to save power.
+
+4. Other Key Modules
+
+GPS: High power during active navigation or in poor signal areas.
+
+Camera: Activating sensors and image processing (especially for video) causes significant short-term power spikes.
+
+Wi-Fi/Bluetooth: Generally efficient, especially Bluetooth Low Energy (BLE).
+
+Sensors and Background Apps: Constant small drains add up ("death by a thousand cuts").
+
+Modern Power Management:
+It's a system-wide effort. Software uses adaptive brightness, app throttling, and deep sleep states to minimize power.
+The goal is to complete tasks quickly with high performance cores, then return the entire system to a low-power idle state.
+\end{ReportAiUse}
+
+\end{document}

@@ -1,1 +1,0 @@
-save  dataA_27.mat  a  b  c

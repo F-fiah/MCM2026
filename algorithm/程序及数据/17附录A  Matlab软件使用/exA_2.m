@@ -1,1 +1,0 @@
-fplot(@(x)tan(x))
