@@ -1,0 +1,12 @@
+a=ones(6,6)*1000;
+a(1,1:6)=[0 15 20 27 37 54];
+a(2,2:6)=[0 15 20 27 37];
+a(3,3:6)=[0 16 21 28];
+a(4,4:6)=[0 16 21];
+a(5,5:6)=[0 17];
+a(6,6)=0;
+node_names = {'v1','v2','v3','v4','v5','v6'};
+G = digraph(a, node_names);
+[path,d,edge]=shortestpath(G,1,6);
+p = plot(G,'Layout','force','EdgeColor','k','NodeFontSize',12,'NodeColor','w');
+highlight(p, 'Edges',edge, 'EdgeColor','r','LineWidth',2);
